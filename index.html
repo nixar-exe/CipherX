@@ -39,6 +39,41 @@
       border: 2px solid #000;
       padding: 20px;
       margin-top: 30px;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+    .aadhaar-output h5 {
+      background-color: #e62928;
+      color: white;
+      padding: 5px;
+      text-align: center;
+    }
+    .aadhaar-card-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .aadhaar-details {
+      width: 68%;
+    }
+    .aadhaar-photo {
+      width: 30%;
+    }
+    .aadhaar-photo img {
+      width: 100%;
+      height: auto;
+      border: 1px solid #000;
+    }
+    .aadhaar-qr-signature {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .aadhaar-qr {
+      width: 100px;
+      height: 100px;
+      background-color: #ccc;
+      display: inline-block;
     }
   </style>
 </head>
@@ -49,7 +84,7 @@
         <div class="card">
           <div class="card-header">Aadhaar Details in English</div>
           <div class="card-body">
-            <input type="text" id="aadhaar" class="form-control mb-3" placeholder="Enter Aadhaar Number" />
+            <input type="text" id="aadhaar" class="form-control mb-3" placeholder="Enter Aadhaar Number" maxlength="12" />
             <input type="text" id="name" class="form-control mb-3" placeholder="Enter Name" />
             <select id="gender" class="form-select mb-3">
               <option selected disabled>Select Gender</option>
@@ -69,14 +104,14 @@
           <div class="card-body">
             <select id="language" class="form-select mb-3">
               <option selected disabled>Select Language</option>
-              <option>Hindi</option>
-              <option>Tamil</option>
-              <option>Telugu</option>
+              <option value="hi">Hindi</option>
+              <option value="ta">Tamil</option>
+              <option value="te">Telugu</option>
             </select>
-            <input type="text" class="form-control mb-3" placeholder="Name (Regional)" disabled />
-            <input type="text" class="form-control mb-3" placeholder="Gender (Regional)" disabled />
-            <input type="text" class="form-control mb-3" placeholder="DOB (Regional)" disabled />
-            <textarea class="form-control" rows="2" placeholder="Full Address (Regional)" disabled></textarea>
+            <input type="text" id="regName" class="form-control mb-3" placeholder="Name (Regional)" disabled />
+            <input type="text" id="regGender" class="form-control mb-3" placeholder="Gender (Regional)" disabled />
+            <input type="text" id="regDob" class="form-control mb-3" placeholder="DOB (Regional)" disabled />
+            <textarea id="regAddress" class="form-control" rows="2" placeholder="Full Address (Regional)" disabled></textarea>
           </div>
         </div>
       </div>
@@ -94,12 +129,23 @@
     </div>
 
     <div class="aadhaar-output" id="card">
-      <h4>Generated Aadhaar Card</h4>
-      <p><strong>No:</strong> <span id="cardAadhaar"></span></p>
-      <p><strong>Name:</strong> <span id="cardName"></span></p>
-      <p><strong>Gender:</strong> <span id="cardGender"></span></p>
-      <p><strong>DOB:</strong> <span id="cardDob"></span></p>
-      <p><strong>Address:</strong> <span id="cardAddress"></span></p>
+      <h5>Government of India - UIDAI</h5>
+      <div class="aadhaar-card-inner">
+        <div class="aadhaar-details">
+          <p><strong>Name:</strong> <span id="cardName"></span></p>
+          <p><strong>Gender:</strong> <span id="cardGender"></span></p>
+          <p><strong>DOB:</strong> <span id="cardDob"></span></p>
+          <p><strong>Address:</strong> <span id="cardAddress"></span></p>
+          <p><strong>Aadhaar No:</strong> <span id="cardAadhaar"></span></p>
+        </div>
+        <div class="aadhaar-photo">
+          <img id="cardPhoto" src="assets/placeholder.png" />
+        </div>
+      </div>
+      <div class="aadhaar-qr-signature">
+        <div class="aadhaar-qr"></div>
+        <div><small>Signature of Issuing Authority</small></div>
+      </div>
     </div>
   </div>
 
@@ -108,10 +154,43 @@
   <script>
     flatpickr("#dob", { dateFormat: "d/m/Y" });
 
+    const translations = {
+      hi: {
+        Male: "पुरुष",
+        Female: "महिला",
+        Other: "अन्य"
+      },
+      ta: {
+        Male: "ஆண்",
+        Female: "பெண்",
+        Other: "மற்றவை"
+      },
+      te: {
+        Male: "పురుషుడు",
+        Female: "స్త్రీ",
+        Other: "ఇతరులు"
+      }
+    };
+
+    document.getElementById("language").addEventListener("change", function () {
+      const lang = this.value;
+      const name = document.getElementById("name").value;
+      const gender = document.getElementById("gender").value;
+      const dob = document.getElementById("dob").value;
+      const address = document.getElementById("address").value;
+
+      document.getElementById("regName").value = name;
+      document.getElementById("regGender").value = translations[lang][gender] || "";
+      document.getElementById("regDob").value = dob;
+      document.getElementById("regAddress").value = address;
+    });
+
     document.getElementById("photoInput").addEventListener("change", function(e) {
       const file = e.target.files[0];
       if (file) {
-        document.getElementById("photoPreview").src = URL.createObjectURL(file);
+        const imgUrl = URL.createObjectURL(file);
+        document.getElementById("photoPreview").src = imgUrl;
+        document.getElementById("cardPhoto").src = imgUrl;
       }
     });
 
