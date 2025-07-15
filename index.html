@@ -108,10 +108,10 @@
               <option value="ta">Tamil</option>
               <option value="te">Telugu</option>
             </select>
-            <input type="text" id="regName" class="form-control mb-3" placeholder="Name (Regional)" disabled />
-            <input type="text" id="regGender" class="form-control mb-3" placeholder="Gender (Regional)" disabled />
-            <input type="text" id="regDob" class="form-control mb-3" placeholder="DOB (Regional)" disabled />
-            <textarea id="regAddress" class="form-control" rows="2" placeholder="Full Address (Regional)" disabled></textarea>
+            <input type="text" id="regName" class="form-control mb-3" placeholder="Name (Regional)" />
+            <input type="text" id="regGender" class="form-control mb-3" placeholder="Gender (Regional)" />
+            <input type="text" id="regDob" class="form-control mb-3" placeholder="DOB (Regional)" />
+            <textarea id="regAddress" class="form-control" rows="2" placeholder="Full Address (Regional)"></textarea>
           </div>
         </div>
       </div>
@@ -155,21 +155,9 @@
     flatpickr("#dob", { dateFormat: "d/m/Y" });
 
     const translations = {
-      hi: {
-        Male: "पुरुष",
-        Female: "महिला",
-        Other: "अन्य"
-      },
-      ta: {
-        Male: "ஆண்",
-        Female: "பெண்",
-        Other: "மற்றவை"
-      },
-      te: {
-        Male: "పురుషుడు",
-        Female: "స్త్రీ",
-        Other: "ఇతరులు"
-      }
+      hi: { Male: "पुरुष", Female: "महिला", Other: "अन्य" },
+      ta: { Male: "ஆண்", Female: "பெண்", Other: "மற்றவை" },
+      te: { Male: "పురుషుడు", Female: "స్త్రీ", Other: "ఇతరులు" }
     };
 
     document.getElementById("language").addEventListener("change", function () {
@@ -183,6 +171,14 @@
       document.getElementById("regGender").value = translations[lang][gender] || "";
       document.getElementById("regDob").value = dob;
       document.getElementById("regAddress").value = address;
+    });
+
+    document.getElementById("gender").addEventListener("change", function () {
+      const prefix = this.value === "Male" ? "S/O : " : this.value === "Female" ? "D/O : " : "";
+      const current = document.getElementById("address").value;
+      if (!current.startsWith("S/O") && !current.startsWith("D/O")) {
+        document.getElementById("address").value = prefix;
+      }
     });
 
     document.getElementById("photoInput").addEventListener("change", function(e) {
